@@ -1,4 +1,6 @@
 import { Datas } from "./Datas.js";
+import { Display } from "./Display.js";
+import { Print } from "./Print.js";
 export class FormInputs {
     constructor() {
         this.form = document.getElementById("form");
@@ -13,10 +15,20 @@ export class FormInputs {
         this.price = document.getElementById("price");
         this.quantity = document.getElementById("quantity");
         this.tva = document.getElementById("tva");
+        this.docContainer = document.getElementById("document-container");
+        this.hiddenDiv = document.getElementById("hiddenDiv");
+        this.btnPrint = document.getElementById('print');
         this.submitFormListerner();
+        this.printListener(this.btnPrint, this.docContainer);
     }
     submitFormListerner() {
         this.form.addEventListener('submit', this.handleFormSubmit.bind(this));
+    }
+    printListener(btn, docContainer) {
+        btn.addEventListener('click', () => {
+            const docToPrint = new Print(docContainer);
+            docToPrint.print();
+        });
     }
     handleFormSubmit(e) {
         e.preventDefault();
@@ -28,6 +40,10 @@ export class FormInputs {
             let date = new Date();
             docData = new Datas(type, firstName, lastName, address, country, town, zip, product, price, quantity, tva, date);
             console.log(docData.htmlFormat());
+            //create new facture
+            let template;
+            template = new Display(this.docContainer, this.hiddenDiv, this.btnPrint);
+            template.render(docData, type);
         }
     }
     inputDatas() {
